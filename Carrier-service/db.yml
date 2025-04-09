@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: Ticket-sales-service-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: Ticket-sales-service
+    ports:
+      - "5432:5432"
+#    volumes:
+#      - ./src/main/java/сalorieСalculator/Migration/ creating_tables.sql:/docker-entrypoint-initdb.d/creating_tables.sql
