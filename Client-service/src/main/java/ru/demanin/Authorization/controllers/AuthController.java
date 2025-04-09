@@ -53,24 +53,6 @@ public class AuthController {
         String token = jwtUtil.generateToken(client.getLogin());
         return ResponseEntity.ok(Map.of("jwt-token", token));
     }
-
-//    @PostMapping("/registration")
-//    public Map<String, String> performRegistration(@RequestBody @Valid PersonAuthDTO personAuthDTO,
-//                                                   BindingResult bindingResult) {
-//        Person person = convertToPerson(personAuthDTO);
-//
-//        personValidator.validate(person, bindingResult);
-//
-//        if (bindingResult.hasErrors()) {
-//            return Map.of("message", "Ошибка!");
-//        }
-//
-//        registrationService.register(person);
-//
-//        String token = jwtUtil.generateToken(person.getLogin());
-//        return Map.of("jwt-token", token);
-//    }
-
     @PostMapping("/login")
     @ApiOperation(
             value = "Обновление срока действия токена"
