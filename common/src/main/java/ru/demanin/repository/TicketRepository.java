@@ -5,6 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.demanin.entity.Carrier;
+import ru.demanin.entity.Client;
 import ru.demanin.entity.Route;
 import ru.demanin.entity.Ticket;
 import ru.demanin.status.StatusTicket;
@@ -18,12 +19,14 @@ public class TicketRepository {
     private final JdbcTemplate jdbcTemplate;
     private final RouteRepository routeRepository;
     private final CarrierRepository carrierRepository;
+    private final ClientRepository clientRepository;
 
     @Autowired
-    public TicketRepository(JdbcTemplate jdbcTemplate, RouteRepository routeRepository, CarrierRepository carrierRepository) {
+    public TicketRepository(JdbcTemplate jdbcTemplate, RouteRepository routeRepository, CarrierRepository carrierRepository, ClientRepository clientRepository) {
         this.jdbcTemplate = jdbcTemplate;
         this.routeRepository = routeRepository;
         this.carrierRepository = carrierRepository;
+        this.clientRepository = clientRepository;
     }
 
     public Ticket createTicket(Ticket ticket) throws RuntimeException {
@@ -107,14 +110,20 @@ public class TicketRepository {
         if ("RESERVATION".equals(currentStatus)) {
             throw new RuntimeException("Билет уже забронирован");
         }
-
         String updateSql = "UPDATE ticket SET status = 'RESERVATION' WHERE id = ?";
-         jdbcTemplate.update(updateSql, ticketId);
+        jdbcTemplate.update(updateSql, ticketId);
+        Client client=clientRepository.findByLogin(personLogin);
 
-        String updatePersonTicketId = "UPDATE person SET ticket_id = ? WHERE login = ?";
-         jdbcTemplate.update(updatePersonTicketId, ticketId, personLogin);
-
+        String updatePersonTicketId = "UPDATE ticket SET person_id =?";
+        jdbcTemplate.update(updatePersonTicketId, client.getId());
 
         return ticketId;
+    }
+
+    public Ticket getAllReservationTicket(String personLogin) {
+
+        String getAllReservationTicket = "SELECT * FROM person WHERE login=? ";
+        Client client=jdbcTemplate.queryForObject(getAllReservationTicket, Client.class,personLogin);
+return null;
     }
 }

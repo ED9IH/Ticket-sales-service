@@ -48,37 +48,10 @@ public class ClientRepository {
                 client.setId(rs.getLong("id"));
                 client.setLogin(rs.getString("login"));
                 client.setPassword(rs.getString("password"));
-                // Установите остальные поля в соответствии с вашей таблицей
                 client.setName(rs.getString("name"));
                 client.setFullName(rs.getString("full_name"));
                 return client;
             });
     }
-
-    public List<Ticket> getTicketsByDateAndTime(long id) {
-        // 1. Сначала получаем ID билетов, связанных с клиентом
-        String ticketIdsSql = "SELECT ticket_id FROM person WHERE id = ?";
-        List<Long> ticketIds = jdbcTemplate.queryForList(ticketIdsSql, Long.class, id);
-        // 2. Затем получаем полную информацию о билетах
-        String ticketsSql = "SELECT * FROM ticket WHERE id IN (" +
-                String.join(",", Collections.nCopies(ticketIds.size(), "?")) + ")";
-
-        List<Ticket> tickets = jdbcTemplate.query(
-                ticketsSql,
-                (rs, rowNum) -> {
-                    Ticket ticket = new Ticket();
-                    ticket.setId(rs.getLong("id"));
-                    ticket.setSeatNumber(rs.getInt("seat_number"));
-                    ticket.setPrice(rs.getBigDecimal("price"));
-                    ticket.setDeparture(rs.getTimestamp("departure_time").toLocalDateTime());
-                    ticket.setStatusTicket(StatusTicket.valueOf(rs.getString("status")));
-                    return ticket;
-                },
-                ticketIds.toArray());
-        return tickets.stream()
-                .sorted(Comparator.comparing(Ticket::getDeparture))
-                .collect(Collectors.toList());
-    }
-
 
 }

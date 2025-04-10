@@ -120,7 +120,8 @@ public class TicketController {
 
 
     @PostMapping("/reservedTicket/{ticketId}")
-    public ResponseEntity<ResponseTicket> reservedTicket(@PathVariable Long ticketId,
+    @ApiOperation("Бронирование билетов, не забудьте авторизоваться")
+    public ResponseEntity<ResponseTicket> reservedTicket(@ApiParam("Укажите id билета")@PathVariable Long ticketId,
                                                          @ApiIgnore @AuthenticationPrincipal UserDetails userDetails) {
              ticketService.reservationTicket(ticketId, userDetails.getUsername());
             return ResponseEntity.ok(new ResponseTicket("Билет забронирован"));
