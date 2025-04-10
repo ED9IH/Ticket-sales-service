@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.demanin.status.StatusTicket;
+import ru.demanin.util.StatusTicket;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

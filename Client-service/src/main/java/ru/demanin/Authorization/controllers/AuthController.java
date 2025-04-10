@@ -20,6 +20,7 @@ import ru.demanin.dto.PersonDTO;
 import ru.demanin.entity.Client;
 import ru.demanin.mapper.CreateClientMapper;
 import ru.demanin.repository.ClientRepository;
+import ru.demanin.util.Role;
 
 import java.util.Map;
 
@@ -32,38 +33,40 @@ public class AuthController {
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
     private final CreateClientMapper createClientMapper;
-    private final ClientRepository clientRepository;
 
     @Autowired
     public AuthController(RegistrationService registrationService, PersonValidator personValidator,
-                          JWTUtil jwtUtil, AuthenticationManager authenticationManager, CreateClientMapper createClientMapper, ClientRepository clientRepository) {
+                          JWTUtil jwtUtil, AuthenticationManager authenticationManager, CreateClientMapper createClientMapper) {
         this.registrationService = registrationService;
         this.personValidator = personValidator;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
         this.createClientMapper = createClientMapper;
-        this.clientRepository = clientRepository;
     }
+
     @PostMapping("/registration")
     @ApiOperation(value = "Регистрация клиента")
-    public ResponseEntity<Map<String, String>> addClient(@ApiParam(value = "Введите имя")@RequestParam String name,
-                                            @ApiParam(value = "Введите фамилию")@RequestParam String fullName,
-                                            @ApiParam(value = "Введите отчество")@RequestParam String surname,
-                                            @ApiParam(value = "Введите логин")@RequestParam String login,
-                                            @ApiParam(value = "Введите пароль")@RequestParam String password){
-         Client client =createClientMapper.toEntity(new PersonDTO(name,fullName,surname,login,password));
-                 registrationService.register(client);
+    public ResponseEntity<Map<String, String>> addClient(@ApiParam(value = "Введите имя") @RequestParam String name,
+                                                         @ApiParam(value = "Введите фамилию") @RequestParam String fullName,
+                                                         @ApiParam(value = "Введите отчество") @RequestParam String surname,
+                                                         @ApiParam(value = "Введите логин") @RequestParam String login,
+                                                         @ApiParam(value = "Введите пароль") @RequestParam String password,
+                                                         @ApiParam(value = "Укажите роль") @RequestParam Role role) {
+        Client client = createClientMapper.toEntity(new PersonDTO(name, fullName, surname, login, password,role));
+        registrationService.register(client);
         String token = jwtUtil.generateToken(client.getLogin());
         return ResponseEntity.ok(Map.of("jwt-token", token));
     }
+
     @PostMapping("/login")
     @ApiOperation(
             value = "Обновление срока действия токена"
     )
-    public Map<String, String> performLogin(@ApiParam(value = "Введите логин")@RequestParam String login,
-                                            @ApiParam(value = "Введите пароль")@RequestParam String password) {
+    public Map<String, String> performLogin(@ApiParam(value = "Введите логин") @RequestParam String login,
+                                            @ApiParam(value = "Введите пароль") @RequestParam String password
+                                            ) {
 
- PersonAuthDTO personAuthDTO =  new PersonAuthDTO(login,password);
+        PersonAuthDTO personAuthDTO = new PersonAuthDTO(login, password);
         UsernamePasswordAuthenticationToken authInputToken =
                 new UsernamePasswordAuthenticationToken(personAuthDTO.getLogin(),
                         personAuthDTO.getPassword());

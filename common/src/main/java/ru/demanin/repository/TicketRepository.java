@@ -8,11 +8,10 @@ import ru.demanin.entity.Carrier;
 import ru.demanin.entity.Client;
 import ru.demanin.entity.Route;
 import ru.demanin.entity.Ticket;
-import ru.demanin.status.StatusTicket;
+import ru.demanin.util.StatusTicket;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -88,7 +87,6 @@ public class TicketRepository {
                     if (departureTs != null) {
                         ticket.setDeparture(departureTs.toLocalDateTime());
                     }
-
                     return ticket;
                 },
                 StatusTicket.FREE.name()
@@ -159,5 +157,9 @@ public class TicketRepository {
                 },
                 personId
         );
+    }
+    public void deleteTicket(long ticketId){
+        String deleteSql="DELETE FROM public.ticket WHERE id = ?;";
+        jdbcTemplate.update(deleteSql,Ticket.class,ticketId);
     }
 }

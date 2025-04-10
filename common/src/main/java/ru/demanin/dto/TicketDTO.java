@@ -3,7 +3,7 @@ package ru.demanin.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import ru.demanin.status.StatusTicket;
+import ru.demanin.util.StatusTicket;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

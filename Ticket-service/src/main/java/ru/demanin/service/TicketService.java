@@ -9,7 +9,7 @@ import ru.demanin.mapper.CreateTicketMapper;
 import ru.demanin.mapper.GetAllTicketMapper;
 import ru.demanin.repository.RouteRepository;
 import ru.demanin.repository.TicketRepository;
-import ru.demanin.status.StatusTicket;
+import ru.demanin.util.StatusTicket;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -92,5 +92,8 @@ public class TicketService {
         }
         int toIndex = Math.min(fromIndex + size, items.size());
         return items.subList(fromIndex, toIndex);
+    }
+    public void deleteTicket(long ticketId){
+        ticketRepository.deleteTicket(ticketId);
     }
 }

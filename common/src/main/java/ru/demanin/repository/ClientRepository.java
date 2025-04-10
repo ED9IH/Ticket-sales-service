@@ -4,13 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.demanin.entity.Client;
-import ru.demanin.entity.Ticket;
-import ru.demanin.status.StatusTicket;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class ClientRepository {
@@ -27,8 +20,8 @@ public class ClientRepository {
         if (count > 0) {
             throw new RuntimeException("Пользователь с логином " + client.getLogin() + " уже существует");
         }
-        String insertSql = "INSERT INTO person (name, full_name, surname, login, password) " +
-                "VALUES (?, ?, ?, ?, ?) RETURNING id";
+        String insertSql = "INSERT INTO person (name, full_name, surname, login, password, role) " +
+                "VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
         return jdbcTemplate.queryForObject(
                 insertSql,
                 Long.class,
@@ -36,7 +29,9 @@ public class ClientRepository {
                 client.getFullName(),
                 client.getSurname(),
                 client.getLogin(),
-                client.getPassword()
+                client.getPassword(),
+                String.valueOf(client.getRole())
+
         );
     }
 

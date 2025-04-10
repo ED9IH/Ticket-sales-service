@@ -1,4 +1,4 @@
-package ru.demanin.status;
+package ru.demanin.util;
 
 public enum StatusTicket {
     FREE, RESERVATION

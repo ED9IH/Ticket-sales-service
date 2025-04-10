@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.demanin.Authorization.security.JWTUtil;
 import ru.demanin.Authorization.services.PersonDetailsService;
+import ru.demanin.util.Role;
 
 
 @EnableWebSecurity
@@ -40,14 +41,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-resources/**",
                         "/webjars/**"
                 ).permitAll()
-//               .antMatchers("/task/all").hasAnyAuthority()
-//                .antMatchers("/task/{taskId}").hasAnyAuthority(Role.ADMIN.name(), Role.EXECUTOR.name())
-//                .antMatchers("/task/newTask").hasAuthority(Role.ADMIN.name())
-//                .antMatchers("/task/editStatus").hasAnyAuthority(Role.ADMIN.name(), Role.EXECUTOR.name())
-//                .antMatchers("/task/delete").hasAuthority(Role.ADMIN.name())
-//                .antMatchers("/task/editPriority").hasAuthority(Role.ADMIN.name())
-//                .antMatchers("/users/allUsers").hasAuthority(Role.ADMIN.name())
-//                .antMatchers("/task/addComment").hasAnyAuthority(Role.ADMIN.name(), Role.EXECUTOR.name())
+                .antMatchers("/api/carrier").hasAnyAuthority()
+                .antMatchers("/api/carrier/createCarrier").hasAnyAuthority(Role.ROLE_ADMINISTRATOR.name())
+                .antMatchers("/api/carrier/deleteCarrier").hasAnyAuthority(Role.ROLE_ADMINISTRATOR.name())
+                .antMatchers("/api/route").hasAnyAuthority()
+                .antMatchers("/api/route/create").hasAnyAuthority(Role.ROLE_ADMINISTRATOR.name())
+                .antMatchers("/api/route/deleteRoute").hasAnyAuthority(Role.ROLE_ADMINISTRATOR.name())
+                .antMatchers("/api/ticket").hasAnyAuthority()
+                .antMatchers("/api/ticket/create").hasAnyAuthority(Role.ROLE_ADMINISTRATOR.name())
+                .antMatchers("/api/ticket/freeTicket").hasAnyAuthority(Role.ROLE_ADMINISTRATOR.name(),Role.ROLE_CLIENT.name())
+                .antMatchers("/api/ticket/getTicketsByDateAndTime").hasAnyAuthority(Role.ROLE_ADMINISTRATOR.name(),Role.ROLE_CLIENT.name())
+                .antMatchers("/api/ticket/getTicketsByDeparture").hasAnyAuthority(Role.ROLE_ADMINISTRATOR.name(),Role.ROLE_CLIENT.name())
+                .antMatchers("/api/ticket/getTicketsByCarrier").hasAnyAuthority(Role.ROLE_ADMINISTRATOR.name(),Role.ROLE_CLIENT.name())
+                .antMatchers("/api/ticket/reservedTicket/{ticketId}").hasAnyAuthority(Role.ROLE_ADMINISTRATOR.name(),Role.ROLE_CLIENT.name())
+                .antMatchers("/api/ticket/getAllReservationMyTicket").hasAnyAuthority(Role.ROLE_ADMINISTRATOR.name(),Role.ROLE_CLIENT.name())
+                .antMatchers("/api/ticket/deleteTicket").hasAnyAuthority(Role.ROLE_ADMINISTRATOR.name(),Role.ROLE_CLIENT.name())
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JWTFilter(jwtUtil, personDetailsService), UsernamePasswordAuthenticationFilter.class)

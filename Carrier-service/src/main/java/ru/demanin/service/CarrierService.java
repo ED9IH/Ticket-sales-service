@@ -22,4 +22,7 @@ public class CarrierService {
         Carrier carrier=createCarrierMapper.toEntity(new CarrierDTO(name,phoneNumber));
         return carrierRepository.createCarrier(carrier);
     }
+    public void deleteCarrier(long carrierId){
+        carrierRepository.deleteCarrier(carrierId);
+    }
 }

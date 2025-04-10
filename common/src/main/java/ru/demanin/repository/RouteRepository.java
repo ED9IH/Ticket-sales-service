@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.demanin.entity.Client;
 import ru.demanin.entity.Route;
+import ru.demanin.entity.Ticket;
 
 @Repository
 public class RouteRepository {
@@ -49,5 +50,10 @@ public class RouteRepository {
                 },
                 id
         );
+    }
+
+    public void deleteRoute(long routeId){
+        String deleteSql="DELETE FROM public.route WHERE id = ?;";
+        jdbcTemplate.update(deleteSql, Ticket.class,routeId);
     }
 }

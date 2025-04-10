@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.demanin.entity.Carrier;
 import ru.demanin.entity.Route;
+import ru.demanin.entity.Ticket;
 
 @Repository
 public class CarrierRepository {
@@ -48,5 +49,12 @@ public class CarrierRepository {
                 },
                 id
         );
+    }
+
+    public void deleteCarrier(long carrierId){
+        String deleteTicketSql="DELETE FROM public.ticket WHERE carrier_id = ?";
+        jdbcTemplate.update(deleteTicketSql, Ticket.class,carrierId);
+        String deleteCarrier="DELETE FROM public.carrier WHERE id = ?";
+        jdbcTemplate.update(deleteCarrier, Carrier.class,carrierId);
     }
 }

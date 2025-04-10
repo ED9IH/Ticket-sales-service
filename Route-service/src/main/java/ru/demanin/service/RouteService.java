@@ -24,4 +24,8 @@ public class RouteService {
         Route route = routeMapper.toEntity(new RouteDTO(departure_point,destination_point,duration_in_minutes));
        return routeRepository.createRoute(route);
     }
+
+    public void deleteRoute(long routeId){
+        routeRepository.deleteRoute(routeId);
+    }
 }

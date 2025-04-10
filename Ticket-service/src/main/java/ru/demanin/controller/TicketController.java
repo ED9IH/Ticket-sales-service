@@ -111,13 +111,6 @@ public class TicketController {
         return ResponseEntity.ok(tickets);
     }
 
-//    @PostMapping("/reservedTicket")
-//    @ApiOperation("бронирование билетов")
-//    public ResponseEntity<ResponseTicket> reservedTicket(@ApiParam("Укажите id билета") @RequestParam long id) {
-//        ticketService.payTicket(id);
-//        return ResponseEntity.ok(new ResponseTicket("Билет зарезирвирован"));
-//    }
-
 
     @PostMapping("/reservedTicket/{ticketId}")
     @ApiOperation("Бронирование билетов, не забудьте авторизоваться")
@@ -131,6 +124,13 @@ public class TicketController {
     @ApiOperation("Получить все билеты текущего пользователя")
     public List<Ticket> getAllReservationMyTicket(@ApiIgnore @AuthenticationPrincipal UserDetails userDetails) {
         return ticketService.getAllReservationMyTicket(userDetails.getUsername());
+    }
+    @PostMapping("/deleteTicket")
+    @ApiOperation("Удаление билета")
+    public ResponseEntity<ResponseTicket>deleteTicket(@ApiParam(value = "Укажите логин билета")
+                                                      @RequestParam long ticketId){
+        ticketService.deleteTicket(ticketId);
+        return ResponseEntity.ok(new ResponseTicket("Билет удален"));
     }
 
 }

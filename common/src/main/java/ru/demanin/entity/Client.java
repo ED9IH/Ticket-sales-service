@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.demanin.util.Role;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -21,8 +22,9 @@ public class Client {
     @NotEmpty(message = "Поле не должно быть пустым")
     private String surname;
     @NotEmpty(message = "Поле не должно быть пустым")
-    @Email
     private String login;
     @NotEmpty(message = "Поле не должно быть пустым")
     private String password;
+    @NotEmpty(message = "Поле не должно быть пустым")
+    private Role role;
 }

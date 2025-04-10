@@ -1,6 +1,7 @@
 package ru.demanin.Controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +24,18 @@ public class RouteController {
     }
 
     @PostMapping("/create")
+    @ApiOperation("Создание маршрута")
     public ResponseEntity<ResponseRoute> createRout(@ApiParam(value = "Введите точку отправления") @RequestParam String departure_point,
                                                     @ApiParam(value = "Введите пункт назначения") @RequestParam String destination_point,
                                                     @ApiParam(value = "Введите время в пути в минутах") @RequestParam int duration_in_minutes) {
         routeService.createRoute(departure_point,destination_point,duration_in_minutes);
         return ResponseEntity.ok(new ResponseRoute("Путь создан"));
 
+    }
+    @PostMapping("/deleteRoute")
+    @ApiOperation("Удаление маршрута")
+    private ResponseEntity<ResponseRoute>deleteRoute(@ApiParam(value = "Укажите Id Маршрута") @RequestParam long routeId){
+        routeService.deleteRoute(routeId);
+        return ResponseEntity.ok(new ResponseRoute("Маршрут удален"));
     }
 }

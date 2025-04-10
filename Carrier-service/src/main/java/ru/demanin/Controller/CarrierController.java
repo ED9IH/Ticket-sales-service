@@ -1,6 +1,7 @@
 package ru.demanin.Controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,18 @@ public class CarrierController {
     }
 
     @PostMapping("/createCarrier")
+    @ApiOperation("Создание перевозчика")
     public ResponseEntity<ResponseCarrier> createCarrier(@ApiParam(value = "Введите название фирмы перевозчика") @RequestParam String name,
                                                          @ApiParam(value = "Введите номер телефона") @RequestParam String phoneNumber) {
         carrierService.createCarrier(name, phoneNumber);
         return ResponseEntity.ok(new ResponseCarrier("Фирма зарегестрировага"));
+    }
+    @PostMapping("/deleteCarrier")
+    @ApiOperation("Удаление перевозчика")
+    public ResponseEntity<ResponseCarrier>deleteCarrier(@ApiParam("Укажите id перевозчика")
+                                                        @RequestParam long carrierId){
+        carrierService.deleteCarrier(carrierId);
+        return ResponseEntity.ok(new ResponseCarrier("Перевозчик удален"));
     }
 
 }
