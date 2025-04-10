@@ -2,6 +2,7 @@ package ru.demanin.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.demanin.entity.Ticket;
 import ru.demanin.mapper.CreateClientMapper;
 import ru.demanin.repository.ClientRepository;
 
@@ -16,6 +17,8 @@ public class ClientService {
         this.clientRepository = clientRepository;
         this.createClientMapper = createClientMapper;
     }
+
+
 
 
 

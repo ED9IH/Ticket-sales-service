@@ -13,7 +13,10 @@ import ru.demanin.status.StatusTicket;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TicketService {
@@ -38,5 +41,50 @@ public class TicketService {
     public List<GetAllTicketDTO> getAllTicketFree() {
         List<Ticket> ticket = ticketRepository.getAllFreeTicket();
         return getAllTicketMapper.toDTOAllTicket(ticket);
+    }
+
+
+    public List<Ticket> getTicketsByDateAndTime(int page, int size) {
+        List<Ticket> allTickets = ticketRepository.getAllFreeTicket().stream()
+                .sorted(Comparator.comparing(Ticket::getDeparture))
+                .collect(Collectors.toList());
+        return paginateList(allTickets, page, size);
+    }
+    public List<Ticket> getTicketsByDeparture(int page, int size, String departurePoint, String destinationPoint) {
+
+        if (departurePoint.equals("") || destinationPoint.equals("")){
+            throw new RuntimeException("Вы забыли ввести точку отправления или пунк назначения");
+        }
+        List<Ticket> filteredTickets = ticketRepository.getAllFreeTicket().stream()
+                .filter(ticket -> containsIgnoreCase(ticket.getId_route().getDeparturePoint(), departurePoint))
+                .filter(ticket -> containsIgnoreCase(ticket.getId_route().getDestinationPoint(), destinationPoint))
+                .sorted(Comparator.comparing(Ticket::getDeparture))
+                .collect(Collectors.toList());
+
+        return paginateList(filteredTickets, page, size);
+    }
+
+    // Вспомогательный метод для проверки вхождения строки без учета регистра
+    private boolean containsIgnoreCase(String source, String search) {
+        if (search == null || search.isEmpty()) {
+            return true; // если фильтр не задан - пропускаем все записи
+        }
+        return source != null && source.toLowerCase().contains(search.toLowerCase());
+    }
+
+    // Метод пагинации (остается без изменений)
+
+    private List<Ticket> paginateList(List<Ticket> items, int page, int size) {
+        if (size <= 0 || page < 0) {
+            throw new IllegalArgumentException("Invalid page or size");
+        }
+
+        int fromIndex = page * size;
+        if (fromIndex >= items.size()) {
+            return Collections.emptyList();
+        }
+
+        int toIndex = Math.min(fromIndex + size, items.size());
+        return items.subList(fromIndex, toIndex);
     }
 }
