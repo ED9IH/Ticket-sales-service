@@ -1,6 +1,7 @@
 package ru.demanin.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.demanin.entity.Carrier;
@@ -18,14 +19,12 @@ public class TicketRepository {
     private final RouteRepository routeRepository;
     private final CarrierRepository carrierRepository;
 
-
     @Autowired
     public TicketRepository(JdbcTemplate jdbcTemplate, RouteRepository routeRepository, CarrierRepository carrierRepository) {
         this.jdbcTemplate = jdbcTemplate;
         this.routeRepository = routeRepository;
         this.carrierRepository = carrierRepository;
     }
-
 
     public Ticket createTicket(Ticket ticket) throws RuntimeException {
         Route route = routeRepository.findById(ticket.getId_route().getId());
@@ -51,14 +50,13 @@ public class TicketRepository {
                     savedTicket.setDeparture(rs.getTimestamp("departure_time").toLocalDateTime());
                     return savedTicket;
                 },
-                // Теперь передаем правильные значения - ID объектов
-                route.getId(),          // route_id
-                carrier.getId(),         // carrier_id
-                LocalDateTime.now(),     // data_time
-                ticket.getSeatNumber(),  // seat_number
-                ticket.getPrice(),       // price
-                StatusTicket.FREE.name(),// status
-                ticket.getDeparture()    // departure_time
+                route.getId(),
+                carrier.getId(),
+                LocalDateTime.now(),
+                ticket.getSeatNumber(),
+                ticket.getPrice(),
+                StatusTicket.FREE.name(),
+                ticket.getDeparture()
         );
     }
 
@@ -73,7 +71,6 @@ public class TicketRepository {
                     Long routeId = rs.getLong("route_id");
                     Route route = routeRepository.findById(routeId);
                     ticket.setId_route(route);
-                    // Получаем ID перевозчика и находим полный объект
                     Long carrierId = rs.getLong("carrier_id");
                     Carrier carrier = carrierRepository.findById(carrierId);
                     ticket.setCarrier_id(carrier);
@@ -94,8 +91,28 @@ public class TicketRepository {
         );
     }
 
-//    public Ticket payTicket(){
-//        String insertSql = "select * from ticket " + "WHERE id=?";
-//        jdbcTemplate.queryForObject(insertSql,)
-//    }
+    public Long reservationTicket(long ticketId) {
+        String statusSql = "SELECT status FROM ticket WHERE id = ?";
+        String currentStatus;
+        try {
+            currentStatus = jdbcTemplate.queryForObject(
+                    statusSql,
+                    String.class,
+                    ticketId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new IllegalArgumentException("Билет с id " + ticketId + " не найден");
+        }
+
+        if ("RESERVATION".equals(currentStatus)) {
+            throw new IllegalStateException("Билет уже забронирован");
+        }
+
+        String updateSql = "UPDATE ticket SET status = 'RESERVATION' WHERE id = ?";
+        int updated = jdbcTemplate.update(updateSql, ticketId);
+
+        if (updated != 1) {
+            throw new RuntimeException("Не удалось обновить статус билета");
+        }
+        return ticketId;
+    }
 }

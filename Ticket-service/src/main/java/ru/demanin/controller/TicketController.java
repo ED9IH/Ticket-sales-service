@@ -3,14 +3,12 @@ package ru.demanin.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.demanin.dto.GetAllTicketDTO;
-import ru.demanin.dto.TicketDTO;
 import ru.demanin.entity.Ticket;
 import ru.demanin.exception.ErrorResponse;
 import ru.demanin.exception.InvalidRequestException;
@@ -54,14 +52,15 @@ public class TicketController {
 
     @GetMapping("/getTicketsByDateAndTime")
     @ApiOperation("Все билеты c фильтрации по дате отправления")
-    public ResponseEntity<List<Ticket>>  getTicketsByDateAndTime(
+    public ResponseEntity<List<Ticket>> getTicketsByDateAndTime(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        if(ticketService.getTicketsByDateAndTime(page, size)==null){
-           throw new InvalidRequestException("Билеты не найдены");
+        if (ticketService.getTicketsByDateAndTime(page, size) == null) {
+            throw new InvalidRequestException("Билеты не найдены");
         }
         return ResponseEntity.ok(ticketService.getTicketsByDateAndTime(page, size));
     }
+
     @GetMapping("/getTicketsByDeparture")
     @ApiOperation("Все билеты фильтрации по пункту назначения и отправления")
     public ResponseEntity<List<Ticket>> getTicketsByDeparture(
@@ -87,6 +86,33 @@ public class TicketController {
         }
 
         return ResponseEntity.ok(tickets);
+    }
+
+    @GetMapping("/getTicketsByCarrier")
+    @ApiOperation("Все билеты фильтрации по имени перевозчика")
+    public ResponseEntity<List<Ticket>> getTicketsByCarrier(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @ApiParam("Имя перевозчика") @RequestParam String carrier) {
+
+        if (carrier == null || carrier.isEmpty()) {
+            throw new InvalidRequestException("Поле 'Имя перевозчика' не может быть пустым");
+        }
+        List<Ticket> tickets = ticketService.getTicketsByCarrier(
+                page, size,
+                carrier.trim());
+        if (tickets.isEmpty()) {
+            throw new TicketNotFoundException("Билеты по заданным критериям не найдены");
+        }
+
+        return ResponseEntity.ok(tickets);
+    }
+
+    @PostMapping("/reservedTicket")
+    @ApiOperation("бронирование билетов")
+    public ResponseEntity<ResponseTicket> reservedTicket(@ApiParam("Укажите id билета") @RequestParam long id) {
+        ticketService.payTicket(id);
+        return ResponseEntity.ok(new ResponseTicket("Билет зарезирвирован"));
     }
 
 

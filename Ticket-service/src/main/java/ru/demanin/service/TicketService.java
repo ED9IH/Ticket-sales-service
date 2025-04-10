@@ -50,40 +50,43 @@ public class TicketService {
                 .collect(Collectors.toList());
         return paginateList(allTickets, page, size);
     }
-    public List<Ticket> getTicketsByDeparture(int page, int size, String departurePoint, String destinationPoint) {
 
-        if (departurePoint.equals("") || destinationPoint.equals("")){
-            throw new RuntimeException("Вы забыли ввести точку отправления или пунк назначения");
-        }
+    public List<Ticket> getTicketsByDeparture(int page, int size, String departurePoint, String destinationPoint) {
         List<Ticket> filteredTickets = ticketRepository.getAllFreeTicket().stream()
                 .filter(ticket -> containsIgnoreCase(ticket.getId_route().getDeparturePoint(), departurePoint))
                 .filter(ticket -> containsIgnoreCase(ticket.getId_route().getDestinationPoint(), destinationPoint))
                 .sorted(Comparator.comparing(Ticket::getDeparture))
                 .collect(Collectors.toList());
-
         return paginateList(filteredTickets, page, size);
     }
 
-    // Вспомогательный метод для проверки вхождения строки без учета регистра
+    public List<Ticket> getTicketsByCarrier(int page, int size, String carrier) {
+
+        List<Ticket> filteredTickets = ticketRepository.getAllFreeTicket().stream()
+                .filter(ticket -> containsIgnoreCase(ticket.getCarrier_id().getCompanyName(), carrier))
+                .collect(Collectors.toList());
+        return paginateList(filteredTickets, page, size);
+    }
+
+    public Long payTicket(long id) {
+      return ticketRepository.reservationTicket(id);
+    }
+
     private boolean containsIgnoreCase(String source, String search) {
         if (search == null || search.isEmpty()) {
-            return true; // если фильтр не задан - пропускаем все записи
+            return true;
         }
         return source != null && source.toLowerCase().contains(search.toLowerCase());
     }
-
-    // Метод пагинации (остается без изменений)
 
     private List<Ticket> paginateList(List<Ticket> items, int page, int size) {
         if (size <= 0 || page < 0) {
             throw new IllegalArgumentException("Invalid page or size");
         }
-
         int fromIndex = page * size;
         if (fromIndex >= items.size()) {
             return Collections.emptyList();
         }
-
         int toIndex = Math.min(fromIndex + size, items.size());
         return items.subList(fromIndex, toIndex);
     }
