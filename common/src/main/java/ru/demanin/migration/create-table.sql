@@ -15,6 +15,9 @@ comment on column carrier.company_name is 'Название фирмы';
 
 comment on column carrier.phone_number is 'Номер телефона';
 
+alter table carrier
+    owner to postgres;
+
 create table person
 (
     id        bigint generated always as identity
@@ -27,9 +30,7 @@ create table person
         constraint client_pk2
             unique,
     password  varchar not null,
-    ticket_id bigint
-        constraint person_ticket_id_fk
-            references ticket
+    role      varchar
 );
 
 comment on column person.id is 'Id Клиента';
@@ -44,9 +45,8 @@ comment on column person.login is 'Логин клиента';
 
 comment on column person.password is 'Пароль клиента';
 
-comment on column person.ticket_id is 'Id купленого билета';
-
-
+alter table person
+    owner to postgres;
 
 create table route
 (
@@ -66,8 +66,8 @@ comment on column route.destination_point is 'Пункт назначения';
 
 comment on column route.duration_in_minutes is 'Время в пути в минутах';
 
-
-
+alter table route
+    owner to postgres;
 
 create table ticket
 (
@@ -84,7 +84,10 @@ create table ticket
     departure_time timestamp not null,
     carrier_id     bigint    not null
         constraint ticket_carrier_id_fk
-            references carrier
+            references carrier,
+    person_id      bigint
+        constraint ticket_person_id_fk
+            references person
 );
 
 comment on table ticket is 'Билет';
@@ -101,4 +104,6 @@ comment on column ticket.price is 'Цена билета';
 
 comment on column ticket.departure_time is 'Дата и время отправления';
 
+alter table ticket
+    owner to postgres;
 

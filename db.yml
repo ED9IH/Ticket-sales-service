@@ -9,5 +9,5 @@ services:
       POSTGRES_DB: Ticket-sales-service
     ports:
       - "5432:5432"
-#    volumes:
-#      - ./src/main/java/сalorieСalculator/Migration/ creating_tables.sql:/docker-entrypoint-initdb.d/creating_tables.sql
+    volumes:
+      - ./common/src/main/java/ru/demanin/migration/create-table.sql:/docker-entrypoint-initdb.d/creating-table.sql
