@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.demanin.response.ResponseCarrier;
 import ru.demanin.service.CarrierService;
 
+/**
+ * Контроллер перевозчика
+ */
 @RestController
 @RequestMapping("/api/carrier")
 @Api(value = "Carrier Controller", description = "Операции с перевозчиками")
@@ -23,6 +26,9 @@ public class CarrierController {
         this.carrierService = carrierService;
     }
 
+    /**
+     *Контроллер по созданию перевозчика
+     */
     @PostMapping("/createCarrier")
     @ApiOperation("Создание перевозчика")
     public ResponseEntity<ResponseCarrier> createCarrier(@ApiParam(value = "Введите название фирмы перевозчика") @RequestParam String name,
@@ -30,6 +36,11 @@ public class CarrierController {
         carrierService.createCarrier(name, phoneNumber);
         return ResponseEntity.ok(new ResponseCarrier("Фирма зарегестрировага"));
     }
+
+    /**
+     * Контроллер по удалению перевозчика.
+     * Доступно только администратору
+     */
     @PostMapping("/deleteCarrier")
     @ApiOperation("Удаление перевозчика")
     public ResponseEntity<ResponseCarrier>deleteCarrier(@ApiParam("Укажите id перевозчика")
