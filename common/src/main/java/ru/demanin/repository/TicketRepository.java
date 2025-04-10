@@ -91,7 +91,8 @@ public class TicketRepository {
         );
     }
 
-    public Long reservationTicket(long ticketId) {
+
+    public Long reservationTicket(long ticketId, String personLogin) {
         String statusSql = "SELECT status FROM ticket WHERE id = ?";
         String currentStatus;
         try {
@@ -104,15 +105,16 @@ public class TicketRepository {
         }
 
         if ("RESERVATION".equals(currentStatus)) {
-            throw new IllegalStateException("Билет уже забронирован");
+            throw new RuntimeException("Билет уже забронирован");
         }
 
         String updateSql = "UPDATE ticket SET status = 'RESERVATION' WHERE id = ?";
-        int updated = jdbcTemplate.update(updateSql, ticketId);
+         jdbcTemplate.update(updateSql, ticketId);
 
-        if (updated != 1) {
-            throw new RuntimeException("Не удалось обновить статус билета");
-        }
+        String updatePersonTicketId = "UPDATE person SET ticket_id = ? WHERE login = ?";
+         jdbcTemplate.update(updatePersonTicketId, ticketId, personLogin);
+
+
         return ticketId;
     }
 }

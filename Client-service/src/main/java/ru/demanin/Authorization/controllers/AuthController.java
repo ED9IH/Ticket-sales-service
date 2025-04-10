@@ -19,6 +19,7 @@ import ru.demanin.dto.PersonAuthDTO;
 import ru.demanin.dto.PersonDTO;
 import ru.demanin.entity.Client;
 import ru.demanin.mapper.CreateClientMapper;
+import ru.demanin.repository.ClientRepository;
 
 import java.util.Map;
 
@@ -31,15 +32,17 @@ public class AuthController {
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
     private final CreateClientMapper createClientMapper;
+    private final ClientRepository clientRepository;
 
     @Autowired
     public AuthController(RegistrationService registrationService, PersonValidator personValidator,
-                          JWTUtil jwtUtil, AuthenticationManager authenticationManager, CreateClientMapper createClientMapper) {
+                          JWTUtil jwtUtil, AuthenticationManager authenticationManager, CreateClientMapper createClientMapper, ClientRepository clientRepository) {
         this.registrationService = registrationService;
         this.personValidator = personValidator;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
         this.createClientMapper = createClientMapper;
+        this.clientRepository = clientRepository;
     }
     @PostMapping("/registration")
     @ApiOperation(value = "Регистрация клиента")
@@ -59,7 +62,8 @@ public class AuthController {
     )
     public Map<String, String> performLogin(@ApiParam(value = "Введите логин")@RequestParam String login,
                                             @ApiParam(value = "Введите пароль")@RequestParam String password) {
-        PersonAuthDTO personAuthDTO = new PersonAuthDTO(login,password);
+
+ PersonAuthDTO personAuthDTO =  new PersonAuthDTO(login,password);
         UsernamePasswordAuthenticationToken authInputToken =
                 new UsernamePasswordAuthenticationToken(personAuthDTO.getLogin(),
                         personAuthDTO.getPassword());

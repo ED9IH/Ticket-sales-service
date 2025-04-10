@@ -23,9 +23,9 @@ public class JWTUtil {
 
         return JWT.create()
                 .withSubject("User details")
-                .withClaim("email", email)
+                .withClaim("login", email)
                 .withIssuedAt(new Date())
-                .withIssuer("task_management_system")
+                .withIssuer("Client-service")
                 .withExpiresAt(expirationDate)
                 .sign(Algorithm.HMAC256(secret));
     }
@@ -33,10 +33,10 @@ public class JWTUtil {
     public String validateTokenAndRetrieveClaim(String token) throws JWTVerificationException {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
                 .withSubject("User details")
-                .withIssuer("task_management_system")
+                .withIssuer("Client-service")
                 .build();
 
         DecodedJWT jwt = verifier.verify(token);
-        return jwt.getClaim("email").asString();
+        return jwt.getClaim("login").asString();
     }
 }

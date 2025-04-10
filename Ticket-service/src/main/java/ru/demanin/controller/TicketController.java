@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import ru.demanin.dto.GetAllTicketDTO;
 import ru.demanin.entity.Ticket;
@@ -15,6 +17,7 @@ import ru.demanin.exception.InvalidRequestException;
 import ru.demanin.exception.TicketNotFoundException;
 import ru.demanin.response.ResponseTicket;
 import ru.demanin.service.TicketService;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -108,41 +111,19 @@ public class TicketController {
         return ResponseEntity.ok(tickets);
     }
 
-    @PostMapping("/reservedTicket")
-    @ApiOperation("бронирование билетов")
-    public ResponseEntity<ResponseTicket> reservedTicket(@ApiParam("Укажите id билета") @RequestParam long id) {
-        ticketService.payTicket(id);
-        return ResponseEntity.ok(new ResponseTicket("Билет зарезирвирован"));
-    }
+//    @PostMapping("/reservedTicket")
+//    @ApiOperation("бронирование билетов")
+//    public ResponseEntity<ResponseTicket> reservedTicket(@ApiParam("Укажите id билета") @RequestParam long id) {
+//        ticketService.payTicket(id);
+//        return ResponseEntity.ok(new ResponseTicket("Билет зарезирвирован"));
+//    }
 
 
-    @ExceptionHandler(InvalidRequestException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidRequest(InvalidRequestException ex) {
-        ErrorResponse error = new ErrorResponse(
-                ex.getMessage(),
-                HttpStatus.BAD_REQUEST.value(),
-                LocalDateTime.now()
-        );
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
+    @PostMapping("/reservedTicket/{ticketId}")
+    public ResponseEntity<ResponseTicket> reservedTicket(@PathVariable Long ticketId,
+                                                         @ApiIgnore @AuthenticationPrincipal UserDetails userDetails) {
+             ticketService.reservationTicket(ticketId, userDetails.getUsername());
+            return ResponseEntity.ok(new ResponseTicket("Билет забронирован"));
+        }
 
-    @ExceptionHandler(TicketNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleTicketNotFound(TicketNotFoundException ex) {
-        ErrorResponse error = new ErrorResponse(
-                ex.getMessage(),
-                HttpStatus.NOT_FOUND.value(),
-                LocalDateTime.now()
-        );
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        ErrorResponse error = new ErrorResponse(
-                "Внутренняя ошибка сервера",
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                LocalDateTime.now()
-        );
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 }

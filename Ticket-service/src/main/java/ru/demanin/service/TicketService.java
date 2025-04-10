@@ -68,10 +68,9 @@ public class TicketService {
         return paginateList(filteredTickets, page, size);
     }
 
-    public Long payTicket(long id) {
-      return ticketRepository.reservationTicket(id);
+    public Long reservationTicket(long id,String personLogin) {
+      return ticketRepository.reservationTicket(id,personLogin);
     }
-
     private boolean containsIgnoreCase(String source, String search) {
         if (search == null || search.isEmpty()) {
             return true;

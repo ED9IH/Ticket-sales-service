@@ -6,17 +6,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.demanin.service.ClientService;
 
-@RestController
-@RequestMapping("/api")
-@Api(value = "Client Controller", description = "Операции с клиентами")
+//@RestController
+//@RequestMapping("/api")
+//@Api(value = "Client Controller", description = "Операции с клиентами")
 public class ClientController {
-    private final ClientService clientService;
-
-    @Autowired
-    public ClientController(ClientService clientService) {
-        this.clientService = clientService;
-    }
-//    @ApiOperation(
+//    private final ClientService clientService;
+//
+////    @Autowired
+//    public ClientController(ClientService clientService) {
+//        this.clientService = clientService;
+//    }
+////    @ApiOperation(
 //            value = "Регистрация клиента"
 //    )
 //    @PostMapping("/add/client")

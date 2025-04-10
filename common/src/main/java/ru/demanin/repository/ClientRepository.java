@@ -41,9 +41,18 @@ public class ClientRepository {
     }
 
     public Client findByLogin(String login) {
-        String checkLogin = "SELECT * FROM person where login = ?";
-        Client client = jdbcTemplate.queryForObject(checkLogin, Client.class, login);
-        return client;
+        String sql = "SELECT * FROM person WHERE login = ?";
+
+            return jdbcTemplate.queryForObject(sql, new Object[]{login}, (rs, rowNum) -> {
+                Client client = new Client();
+                client.setId(rs.getLong("id"));
+                client.setLogin(rs.getString("login"));
+                client.setPassword(rs.getString("password"));
+                // Установите остальные поля в соответствии с вашей таблицей
+                client.setName(rs.getString("name"));
+                client.setFullName(rs.getString("full_name"));
+                return client;
+            });
     }
 
     public List<Ticket> getTicketsByDateAndTime(long id) {
