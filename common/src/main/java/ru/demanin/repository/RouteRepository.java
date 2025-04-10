@@ -6,7 +6,19 @@ import org.springframework.stereotype.Repository;
 import ru.demanin.entity.Client;
 import ru.demanin.entity.Route;
 import ru.demanin.entity.Ticket;
-
+/**
+ * Репозиторий для работы с маршрутами в базе данных.
+ * <p>
+ * Обеспечивает основные CRUD-операции для сущности {@link Route}.
+ * </p>
+ *
+ * <p>Основные функции:</p>
+ * <ul>
+ *   <li>Создание нового маршрута</li>
+ *   <li>Поиск маршрута по идентификатору</li>
+ *   <li>Удаление маршрута</li>
+ * </ul>
+ */
 @Repository
 public class RouteRepository {
     private final JdbcTemplate jdbcTemplate;

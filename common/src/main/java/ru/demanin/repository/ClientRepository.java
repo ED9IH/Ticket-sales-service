@@ -4,7 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.demanin.entity.Client;
-
+/**
+ * Репозиторий для работы с клиентами (пользователями) в базе данных.
+ * <p>
+ * Обеспечивает основные операции для работы с сущностью {@link Client}.
+ * </p>
+ *
+ * <p>Основные функции:</p>
+ * <ul>
+ *   <li>Сохранение нового клиента в системе</li>
+ *   <li>Поиск клиента по логину</li>
+ * </ul>
+ */
 @Repository
 public class ClientRepository {
     private final JdbcTemplate jdbcTemplate;

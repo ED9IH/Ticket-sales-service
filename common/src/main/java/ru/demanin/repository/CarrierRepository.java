@@ -6,7 +6,19 @@ import org.springframework.stereotype.Repository;
 import ru.demanin.entity.Carrier;
 import ru.demanin.entity.Route;
 import ru.demanin.entity.Ticket;
-
+/**
+ * Репозиторий для работы с перевозчиками в базе данных.
+ * <p>
+ * Обеспечивает основные CRUD-операции для сущности {@link Carrier}.
+ * </p>
+ *
+ * <p>Основные функции:</p>
+ * <ul>
+ *   <li>Создание нового перевозчика</li>
+ *   <li>Поиск перевозчика по идентификатору</li>
+ *   <li>Удаление перевозчика (с каскадным удалением связанных билетов)</li>
+ * </ul>
+ */
 @Repository
 public class CarrierRepository {
     private final JdbcTemplate jdbcTemplate;

@@ -13,7 +13,22 @@ import ru.demanin.util.StatusTicket;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
-
+/**
+ * Репозиторий для работы с билетами в базе данных.
+ * <p>
+ * Обеспечивает полный набор CRUD-операций для сущности {@link Ticket}.
+ * Включает бизнес-логику работы с билетами (бронирование, поиск свободных билетов и т.д.).
+ * </p>
+ *
+ * <p>Основные функции:</p>
+ * <ul>
+ *   <li>Создание новых билетов</li>
+ *   <li>Получение списка свободных билетов</li>
+ *   <li>Бронирование билетов пользователями</li>
+ *   <li>Получение списка забронированных билетов пользователя</li>
+ *   <li>Удаление билетов</li>
+ * </ul>
+ */
 @Repository
 public class TicketRepository {
     private final JdbcTemplate jdbcTemplate;
