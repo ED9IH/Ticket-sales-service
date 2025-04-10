@@ -71,6 +71,10 @@ public class TicketService {
     public Long reservationTicket(long id,String personLogin) {
       return ticketRepository.reservationTicket(id,personLogin);
     }
+
+    public List<Ticket>getAllReservationMyTicket(String personLogin){
+        return ticketRepository.getAllReservationMyTicket(personLogin);
+    }
     private boolean containsIgnoreCase(String source, String search) {
         if (search == null || search.isEmpty()) {
             return true;

@@ -12,6 +12,7 @@ import ru.demanin.status.StatusTicket;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -112,7 +113,7 @@ public class TicketRepository {
         }
         String updateSql = "UPDATE ticket SET status = 'RESERVATION' WHERE id = ?";
         jdbcTemplate.update(updateSql, ticketId);
-        Client client=clientRepository.findByLogin(personLogin);
+        Client client = clientRepository.findByLogin(personLogin);
 
         String updatePersonTicketId = "UPDATE ticket SET person_id =?";
         jdbcTemplate.update(updatePersonTicketId, client.getId());
@@ -120,10 +121,43 @@ public class TicketRepository {
         return ticketId;
     }
 
-    public Ticket getAllReservationTicket(String personLogin) {
+    public List<Ticket> getAllReservationMyTicket(String personLogin) {
+        Long personId = jdbcTemplate.queryForObject(
+                "SELECT id FROM person WHERE login = ?",
+                Long.class,
+                personLogin);
 
-        String getAllReservationTicket = "SELECT * FROM person WHERE login=? ";
-        Client client=jdbcTemplate.queryForObject(getAllReservationTicket, Client.class,personLogin);
-return null;
+        if (personId == null) {
+            throw new RuntimeException("Пользователь не найден");
+        }
+
+        String sql = "SELECT * FROM ticket WHERE person_id = ?";
+        return jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> {
+                    Ticket ticket = new Ticket();
+                    ticket.setId(rs.getLong("id"));
+                    Long routeId = rs.getLong("route_id");
+                    Route route = routeRepository.findById(routeId);
+                    ticket.setId_route(route);
+                    Long carrierId = rs.getLong("carrier_id");
+                    Carrier carrier = carrierRepository.findById(carrierId);
+                    ticket.setCarrier_id(carrier);
+                    ticket.setData_of_creation(rs.getTimestamp("data_time").toLocalDateTime());
+                    ticket.setSeatNumber(rs.getInt("seat_number"));
+                    ticket.setPrice(rs.getBigDecimal("price"));
+
+                    String status = rs.getString("status");
+                    if (status != null) {
+                        ticket.setStatusTicket(StatusTicket.valueOf(status));
+                    }
+                    Timestamp departureTs = rs.getTimestamp("departure_time");
+                    if (departureTs != null) {
+                        ticket.setDeparture(departureTs.toLocalDateTime());
+                    }
+                    return ticket;
+                },
+                personId
+        );
     }
 }
